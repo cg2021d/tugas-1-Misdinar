@@ -1,7 +1,7 @@
 # Tugas 1 - Grafika Komputer
 Thomas Dwi Awaka- 05111940000021
 
-Nama Benda : WBA
+Nama Benda : Drum
 ### Sisi Depan Atas
 
 ### Sisi Kanan Atas
