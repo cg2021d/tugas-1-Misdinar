@@ -94,7 +94,6 @@ export default class Geometry {
                         this.changeX = true; 
                     }
                     if(vertices[1] >= 1.4 || vertices[1] <= -1.4) {
-                        console.log(vertices[1]);
                         this.changeY = true;
                     }
                     if(vertices[2] >= 1.4 || vertices[2] <= -1.4) {
