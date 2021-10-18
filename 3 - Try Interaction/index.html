@@ -4,9 +4,9 @@
     <title>Try Interaction | Tom | 0021</title>
 </head>
 <body>
-    <h2 style="display: flex; padding-left: 30px; font-family: sans-serif;">Try Interaction | 0511194000021 | Thomas Dwi Awaka</h2>
-    <h2 id="skor" style="display: flex; padding-left: 30px; margin-top: 0; font-family: Verdana;"> Skor : </h2>
     <canvas id="Canvasku"></canvas>
+    <h2 style="display: flex; padding-left: 30px; font-family: sans-serif;">Try Interaction | 0511194000021 | Thomas Dwi Awaka</h2>
+    <h2 id="skor" style="display: flex; padding-left: 30px; margin-top: 0; font-family: Verdana;"> Skor : </h2> 
 </body>
 <script type="module">
     import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
@@ -19,38 +19,26 @@
 
     // Create and locate the camera       
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // camera.position.x = ;
     camera.position.z = 10;
     
 
     // Add Lights to the scene
     let lights = []
-    lights.push( new THREE.DirectionalLight(0x8888FF, 0.5));
+    lights.push( new THREE.DirectionalLight(0x8888FF, 1));
     lights[lights.length-1].position.set(-100, 100, 100);
-    lights.push( new THREE.PointLight(0x8888FF, 0.5));
-    lights[lights.length-1].position.set(100, 100, -100);
     lights.push( new THREE.DirectionalLight(0x8888FF, 0.5));
     lights[lights.length-1].position.set(-100, 100, -100);
-    lights.push( new THREE.PointLight(0x8888FF, 0.5));
-    lights[lights.length-1].position.set(100, -100, 100);
-    lights.push( new THREE.PointLight(0x8888FF, 0.5));
-    lights[lights.length-1].position.set(100, -100, -100);
     lights.push( new THREE.DirectionalLight(0x8888FF, 0.5));
     lights[lights.length-1].position.set(-100, -100, 100);
-    lights.push( new THREE.PointLight(0xFFFFFF, 0.5));
-    lights[lights.length-1].position.set(-100, -100, -100);
-
     lights.push( new THREE.AmbientLight(0x555555, 1));
     
     scene.add(...lights); 
     
-
     // Create the Renderer
     let canvas = document.querySelector('#Canvasku');
     renderer = new THREE.WebGLRenderer({canvas, antialias: true});   
     renderer.setSize(window.innerWidth, window.innerHeight);
     const controls = new OrbitControls(camera, canvas);
-    
     
     //Initiate Variables
     const MAX_DOCA = 64
@@ -64,14 +52,15 @@
     let curTimer = 1000;
 
     function addDoca(number) {
+        //inisiasi warna random
         if(number) {
-            red = Math.floor(Math.random() * 2) * 64 + 64;
+            red = Math.floor(Math.random() * 2) * 64;
             green = Math.floor(Math.random() * 2) * 64 + 32;
             blue = Math.floor(Math.random() * 2) * 64 + 16;
         }
         
         if(objects.length < MAX_DOCA) {
-            //Generates unoccupied space
+            //menciptakan ruang kosong
             do {
                 xPos = (Math.floor(Math.random() * (SQRT_DOCA + 2)) - Math.floor((SQRT_DOCA + 2)/2)) * 1.5;
                 yPos = Math.floor(Math.random() * (SQRT_DOCA + 2)) * 1.5;
@@ -83,11 +72,11 @@
             zPos += Math.random()
         }
 
-        // Add new SphereGeometry while Doca count is not satisfied
+        // menambahkan DodecahedronGeometry baru selama ada ruang kosong
         let bgColor = `${red}${green}${blue}`
         if(objects.length < MAX_DOCA) {
-            // Push Doca to objects list, add to scene and set the position
-            objects.push(new THREE.Mesh( new THREE.DodecahedronGeometry(0.25, 0), new THREE.MeshPhongMaterial( { color: `rgb(${red}, ${green}, ${blue})`, shininess: 200  })));
+            // push Doca ke objek, menambahkan ke scene dan menentukan posisinya
+            objects.push(new THREE.Mesh( new THREE.DodecahedronGeometry(0.5, 0), new THREE.MeshPhongMaterial( { color: `rgb(${red}, ${green}, ${blue})`, shininess: 200  })));
             scene.add( objects[objects.length-1] );
             objects[objects.length-1].position.set(xPos, yPos, zPos);
             
@@ -97,14 +86,15 @@
             else
                 setTimeout(addDoca, curTimer, 1);
         }
-        
-    }
+    };
     
+    // inisiasi awal Dodecahedrom
     addDoca(1);
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    // interaksi mouse saat di click
     function onMouseClick( event ) {
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
         mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -118,12 +108,12 @@
     let start = new Date().getTime();
     let jam = new THREE.Clock();
     let mainLoop = function() {
-        // Calculate Objects Intersecting the Picking Ray
+        // memastikan objek yang dipilih bersinggungan dengn ray
         const intersects = raycaster.intersectObjects(scene.children, false);
         if(intersects.length > 0) {
             if(firstObject != null && firstObject != intersects[0].object) {
                 if(firstObject.material.color.getHex() == intersects[0].object.material.color.getHex()) {
-                    if(new Date().getTime() - start > 250) {
+                    if(new Date().getTime() - start > 360) {
                         start = new Date().getTime();
 
                         scene.remove(firstObject)
@@ -131,7 +121,7 @@
 
                         firstObject = null;
     
-                        skor += 10;
+                        skor += 1;
                         document.querySelector("#skor").innerHTML = `skor: ${skor}`;
                     }
                 }
