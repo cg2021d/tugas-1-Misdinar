@@ -17,9 +17,9 @@
     import * as dat from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/libs/dat.gui.module.js';
 
     let scene, camera, renderer, shepre, target, texture, light, light1, cube, lightHelper, plane;
-    let sphere_dalam, controls, sphere_dalam2;
+    let sphere_dalam, controls, root;
     const gui = new dat.GUI()
-    let ADD = 0.005, theta = 0;
+    let ADD = 0.01, theta = 0;
 
     class FogGUIHelper {
     constructor(fog, backgroundColor) {
@@ -65,7 +65,7 @@
         scene.add(shepre)
 
         // texture = new THREE.TextureLoader().load('stone.jpg');
-        geometry = new THREE.SphereGeometry(0, 8, 8);
+        geometry = new THREE.SphereGeometry(0, 5, 5);
         material = new THREE.MeshPhongMaterial({color : 0xFFFFFF, });
         sphere_dalam =  new THREE.Mesh(geometry, material);
         sphere_dalam.receiveShadow = true;
@@ -75,9 +75,27 @@
         const gltfLoader = new GLTFLoader();
         const url = 'scene.gltf';
         gltfLoader.load(url, (gltf) => {
-        gltf.scene.scale.set(0.2, 0.2, .2);
+        gltf.scene.scale.set(0.2, 0.2, 0.2);
+        root = gltf.scene;
+        root.position.set(-0.55, 5, -5);
+        scene.add(root);
+
+        //buat shadow dari objectnya
+        root.traverse((obj) => {
+        
+        if (obj.castShadow !== undefined) {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        }
+        });
+        });
+
+        const gltfLoader1 = new GLTFLoader();
+        const url1 = 'rocks_ground_01_2k.gltf';
+        gltfLoader1.load(url1, (gltf) => {
+        // gltf.scene.scale.set(0.2, 0.2, .2);
         sphere_dalam = gltf.scene;
-        sphere_dalam.position.set(0, 5, -5);
+        sphere_dalam.position.set(0, 0, 2);
         scene.add(sphere_dalam);
 
         //buat shadow dari objectnya
@@ -108,8 +126,8 @@
             } );
         kaca.position.y = 1;
         kaca.position.z = -5;
-        kaca.castShadow = true;
-        kaca.receiveShadow = true;
+        // kaca.castShadow = true;
+        // kaca.receiveShadow = true;
         scene.add(kaca);         
     }
 
@@ -180,7 +198,7 @@
     // main animation loop - calls 50-60 in a second.
     let mainLoop = function() {
         sphere_dalam.rotation.y += ADD;
-        if(sphere_dalam.rotation.y >= 1 || sphere_dalam.rotation.y <= -1) ADD *= -1;
+        // if(sphere_dalam.rotation.y >= 1 || sphere_dalam.rotation.y <= -1) ADD *= -1;
         // console.log(sphere_dalam.rotation.y, ADD)
         // lightHelper.update();
         renderer.render(scene, camera);
