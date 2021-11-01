@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
     <title>Tugas 4 - Thomas D A | 0021</title>
-    <!-- <script src="js/three.min.js"></script>
-    <script src = "js/controls/OrbitControls.js"></script>      -->
 </head>
 <body>
     
@@ -21,7 +19,7 @@
     let scene, camera, renderer, shepre, target, texture, light, light1, cube, lightHelper, plane;
     let sphere_dalam, controls, sphere_dalam2;
     const gui = new dat.GUI()
-    let ADD = 0.05, theta = 0;
+    let ADD = 0.005, theta = 0;
 
     class FogGUIHelper {
     constructor(fog, backgroundColor) {
@@ -66,7 +64,7 @@
         shepre = new THREE.Mesh(geometry, material);
         scene.add(shepre)
 
-        texture = new THREE.TextureLoader().load('stone.jpg');
+        // texture = new THREE.TextureLoader().load('stone.jpg');
         geometry = new THREE.SphereGeometry(0, 8, 8);
         material = new THREE.MeshPhongMaterial({color : 0xFFFFFF, });
         sphere_dalam =  new THREE.Mesh(geometry, material);
@@ -75,13 +73,16 @@
         scene.add(sphere_dalam);
 
         const gltfLoader = new GLTFLoader();
-        const url = 'rocks_ground_01_2k.gltf';
+        const url = 'scene.gltf';
         gltfLoader.load(url, (gltf) => {
+        gltf.scene.scale.set(0.2, 0.2, .2);
         sphere_dalam = gltf.scene;
+        sphere_dalam.position.set(0, 5, -5);
         scene.add(sphere_dalam);
 
         //buat shadow dari objectnya
         sphere_dalam.traverse((obj) => {
+        
         if (obj.castShadow !== undefined) {
           obj.castShadow = true;
           obj.receiveShadow = true;
@@ -96,10 +97,10 @@
         plane = new THREE.Mesh(geometry, material);
         plane.position.y = -1.5;
         plane.receiveShadow = true;
-        scene.add(plane);f
+        scene.add(plane);
         
         let planeMirror = new THREE.PlaneGeometry( 10, 5 );
-        const kaca = new Reflector( planeMirror, {
+        let kaca = new Reflector( planeMirror, {
                 clipBias: 0.02,
                 textureWidth: window.innerWidth * window.devicePixelRatio,
                 textureHeight: window.innerHeight * window.devicePixelRatio,
@@ -109,8 +110,7 @@
         kaca.position.z = -5;
         kaca.castShadow = true;
         kaca.receiveShadow = true;
-        scene.add(kaca);    
-        
+        scene.add(kaca);         
     }
 
     // set up the environment - 
@@ -179,8 +179,9 @@
     
     // main animation loop - calls 50-60 in a second.
     let mainLoop = function() {
-        sphere_dalam.rotation.x += ADD;
         sphere_dalam.rotation.y += ADD;
+        if(sphere_dalam.rotation.y >= 1 || sphere_dalam.rotation.y <= -1) ADD *= -1;
+        // console.log(sphere_dalam.rotation.y, ADD)
         // lightHelper.update();
         renderer.render(scene, camera);
         controls.update();
